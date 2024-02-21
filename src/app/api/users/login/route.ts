@@ -34,12 +34,20 @@ export async function POST(request: NextRequest) {
     });
 
     if (user && validPassword) {
-      return NextResponse.json({
+      const response = NextResponse.json({
         message: "Login successful",
         status: 200,
         data: user,
         token,
       });
+
+      response.cookies.set("token", token, {
+        httpOnly: true,
+        maxAge: 60 * 60 * 24,
+        path: "/",
+      });
+
+      return response;
     }
   } catch (error: any) {
     console.log("ERROR IN SIGNIN ROUTE: ", error);
